@@ -6,97 +6,138 @@
     <!-- viewport：缩放比例，APP默认与设备保持一致 -->
     <!-- form-detection，格式设置，默认情况下，让手机设备不直接识别手机号、邮箱、密码、日期、地址等 -->
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>Hello APP</title>
+    <title>广场舞</title>
     <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/aui.css" />
     <style type="text/css">
     html,body{
         height: 100%;
+
     }
-    #wrap{
-        height: 100%;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-flex-flow: column;
-    }
-    #header{
+
+
+    #aui-header{
         text-align: center; 
-		background-color: #E68A65; 
+		background-color: #E65A65; 
 		color: #fff;
         width: 100%;
     }
-    #header h1{
-        font-size: 20px; 
-		height: 44px; 
-		line-height: 44px; 
-		margin: 0em; 
-		color: #fff;
-    }
-    #main{
-        -webkit-box-flex: 1; 
-        -webkit-flex: 1;
-    }
-    #footer{
-        height: 30px; 
-		line-height: 30px;
-        background-color: #E68A65; 
-        width: 100%;
-        text-align: center;
-    }
-    #footer h5{
-        color: white;
-    }
-    .con{
-		font-size: 28px; 
-		text-align: center;
-	}
+
+
+
+
+
     </style>
 </head>
-<body>
-    <div id="wrap">
-        <div id="header">
-            <h1>广场舞</h1>
-        </div>
-        <div id="main">
-                
-        </div>
-        <div id="footer">
-            <h5>Copyright &copy;<span id="year"></span> </h5>
-        </div>
-    </div>
+
+<header id="aui-header" class="aui-bar aui-bar-nav aui-bar-dark">顶部导航栏</header>
+
+<footer class="aui-nav" id="aui-footer">
+    <ul class="aui-bar-tab">
+        <li class="active-warning" id="tabbar1" onclick="randomSwitchBtn(this,'栏目1',0)">
+            <span class="aui-iconfont aui-icon-favor"></span>
+            <p>栏目1</p>
+        </li>
+        <li id="tabbar2" onclick="randomSwitchBtn(this,'栏目2',1)">
+            <span class="aui-iconfont aui-icon-mark"></span>
+            <p>栏目2</p>
+        </li>
+        <li id="tabbar3" onclick="randomSwitchBtn(this,'栏目3',2)">
+            <span class="aui-iconfont aui-icon-like"></span>
+            <p>栏目3</p>
+        </li>
+        <li id="tabbar4" onclick="randomSwitchBtn(this,'栏目4',3)">
+            <span class="aui-iconfont aui-icon-my"></span>
+            <p>栏目4</p>
+        </li>
+    </ul>
+</footer>
+
 </body>
 <script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/aui-alert.js"></script>
+
 <script type="text/javascript">
     apiready = function(){
-		//输出Log，Log将显示在APICloud Studio控制台
-		console.log("Hello APICloud");
-
-        var header = $api.byId('header');
-        //适配iOS7+，Android4.4+状态栏沉浸式效果，详见config文档statusBarAppearance字段
-        $api.fixStatusBar(header);
-		//动态计算header的高度，因iOS7+和Android4.4+上支持沉浸式效果，
-		//因此header的实际高度可能为css样式中声明的44px加上设备状态栏高度
-		//其中，IOS状态栏高度为20px，Android为25px
-        var headerH = $api.offset(header).h;
-		//footer高度为css样式中声明的30px
-		var footerH = 30;
-		//frame的高度为当前window高度减去header和footer的高度
-        // var frameH = api.winHeight - headerH - footerH;
-		var frameH = api.winHeight - footerH;
-        api.openFrame({
-            name: 'main',
-            url: 'html/main.html',
-            bounces: true,
-            rect: { // 要求参数是一个json对象
-                x: 0,
-                y: headerH,
-                w: 'auto',
-                h: frameH
+        var header = $api.byId('aui-header');
+        api.fixStatusBar(header); 
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var footer_h = $api.offset($api.byId('aui-footer')).h;
+        api.openFrameGroup ({
+            name: 'footer_tab_demo',
+            scrollEnabled:true,
+            rect:{x:0, y:headerPos.h, w:'auto', h:body_h - headerPos.h - footer_h},
+            index:0,
+            preload:3,
+            frames:
+            [{
+                name: 'footer_tab_1', 
+                url: './html/footer_tab_1.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_2', 
+                url: './html/footer_tab_2.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_3', 
+                url: './html/footer_tab_3.html', 
+                bounces:false
+            },{
+                name: 'footer_tab_4', 
+                url: './html/footer_tab_4.html', 
+                bounces:false
+            }]
+        }, function(ret, err){
+            var footer = $api.byId('aui-footer');
+            var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+            $api.removeCls(footerAct, 'active-warning');
+            var name = ret.name;
+            var index = ret.index;
+            if(index==0){
+                $api.text($api.byId('header-title'),'栏目1');
+                $api.addCls($api.byId('tabbar1'), 'active-warning');
+            }else if(index==1){
+                $api.text($api.byId('header-title'),'栏目2');
+                $api.addCls($api.byId('tabbar2'), 'active-warning');
+            }else if(index==2){
+                $api.text($api.byId('header-title'),'栏目3');
+                $api.addCls($api.byId('tabbar3'), 'active-warning');
+            }else if(index==3){
+                $api.text($api.byId('header-title'),'栏目4');
+                $api.addCls($api.byId('tabbar4'), 'active-warning');
             }
         });
-
-        var year = $api.byId('year');
-        year.innerHTML = new Date().getFullYear();
-
+        
+        // $api.addEvt($api.byId('back'), 'click', function(){
+        //     api.closeWin();
+        // });
+        api.addEvt($api.byId('back'), 'click', function(){
+            api.closeWin();
+        });
     };
+    // function randomSwitchBtn(obj, name, index) {
+    //     $api.text($api.byId('header-title'),name);
+    //     var footer = $api.byId('aui-footer');
+    //     var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warning');
+    //     $api.removeCls(footerAct, 'active-warning');
+    //     $api.addCls(obj, 'active-warning');
+    //     api.setFrameGroupIndex({
+    //         name: 'footer_tab_demo',
+    //         index: index
+    //     });
+    // }
+    function randomSwitchBtn(obj, name, index) {
+        api.text(api.byId('header-title'),name);
+        var footer = api.byId('aui-footer');
+        var footerAct = api.dom(footer, '.aui-bar-tab li.active-warning');
+        api.removeCls(footerAct, 'active-warning');
+        api.addCls(obj, 'active-warning');
+        api.setFrameGroupIndex({
+            name: 'footer_tab_demo',
+            index: index
+        });
+    }
 </script>
+
 </html>
