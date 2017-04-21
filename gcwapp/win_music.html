@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <!-- viewport：缩放比例，APP默认与设备保持一致 -->
+    <!-- form-detection，格式设置，默认情况下，让手机设备不直接识别手机号、邮箱、密码、日期、地址等 -->
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>广场舞</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/aui.css" />
+    <style type="text/css">
+
+     #aui-header{
+        text-align: center; 
+        background-color: #E65A65; 
+        color: #fff;
+        width: 100%;
+    }
+
+    #music {padding: 50px 0;text-align: center;}
+    #music img {border-radius: 100px;width: 200px;height: 200px;}
+    h5 {text-align: center;}
+    .aui-btn-block {padding: 5px 0;font-size: 14px;}
+    .aui-btn-danger {background-color: #E65A65;}
+
+
+
+    </style>
+</head>
+<body>
+
+<header id="aui-header" class="aui-bar aui-bar-nav aui-bar-dark">音乐播放</header>
+<div id="music">
+    <img src="./image/music_card.jpg" alt="">
+</div>
+<h5>买买买--by2</h5>
+    <div class="aui-content">
+        
+        <div class="aui-range" style="margin-top:30px;">
+            <input type="range" class="aui-range-danger" value="30" max="100" min="1" step="1" id="range" />
+        </div>
+    </div>
+
+<div class="aui-btn aui-btn-danger aui-btn-block">开始播放(start)</div><br>
+<div class="aui-btn aui-btn-danger aui-btn-block">停止播放(pause)</div>
+
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/aui-alert.js"></script>
+
+<script type="text/javascript">
+
+</script>
+
+</html>
