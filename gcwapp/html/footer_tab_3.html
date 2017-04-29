@@ -45,6 +45,33 @@
             }
         });
     }
+
+    function fnLoadList(){
+        // 向服务器请求数据
+        api.ajax({
+            url: 'http://www.weilh.vip/admin/news/api',
+            method: 'post',
+            data: {
+                values: { 
+                    name: 'haha'
+                },
+                files: { 
+                    file: 'fs://a.gif'
+                }
+            }
+        },function(ret, err){
+            if (ret) {
+                alert( JSON.stringify( ret ) );
+            } else {
+                alert( JSON.stringify( err ) );
+            }
+        });
+    }
+
+    apiready = function(){
+        fnLoadList();
+    }
+        
 </script>
 
 </html>
