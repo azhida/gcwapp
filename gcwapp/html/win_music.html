@@ -34,26 +34,78 @@
 <div id="music">
     <img src="../image/music_card.jpg" alt="">
 </div>
-<h5>买买买--by2</h5>
+<h5 id="title">最劲爆广场舞APP</h5>
     <div class="aui-content">
         
         <div class="aui-range" style="margin-top:30px;">
-            <input type="range" class="aui-range-danger" value="30" max="100" min="1" step="1" id="range" />
+            <input id="range" type="range" class="aui-range-danger" value="0" max="100" min="1" step="1" id="range" />
         </div>
     </div>
 
-<div class="aui-btn aui-btn-danger aui-btn-block">开始播放(start)</div><br>
-<div class="aui-btn aui-btn-danger aui-btn-block">停止播放(pause)</div>
+<div class="aui-btn aui-btn-danger aui-btn-block" id="btnStart">开始播放(start)</div><br>
+<div class="aui-btn aui-btn-danger aui-btn-block" id="btnPause">停止播放(pause)</div>
 
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/aui-range.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/jQueryRotate.js"></script>
+
 
 <script type="text/javascript">
-    apiready = function(){
+
+    // 播放音乐 方法
+    function fnStart(){
         // 接收播放的音乐地址
         var url = api.pageParam.url;
-        alert(url);
+        var netAudio = api.require('netAudio');
+        netAudio.play({
+            path: url
+        }, function(ret, err) {
+            if (ret) {
+                // 音乐播放 进度条
+                $api.byId('range').value = ret.current / ret.duration * 100;
+            }
+            // 音乐播放的时候 调用旋转方法
+            fnRotate();
+        });
+    }
+
+
+    var angle = 0;
+    var timer;
+    function fnRotate(){
+        // 定义 旋转的方法
+        
+        // 清除已经存在的额定时器（否则会越转越快的）
+        clearInterval(timer);
+        timer = setInterval(function(){
+            angle += 3;
+            $("#music img").rotate(angle);
+        },50);
+    }
+
+    function fnPause(){
+        var netAudio = api.require('netAudio');
+        netAudio.pause();
+    }
+
+
+    apiready = function(){
+        
+        fnStart();
+        $aui.range($api.byId("range"),function(ret){
+            // 拖动滑块，让音乐播放到 对应拖动的位置
+            var netAudio = api.require('netAudio');
+            netAudio.setProgress({
+                progress: ret
+            })
+        })
+
+        // 获取 btnStart 和 btnPause
+        $api.byId('btnStart').onclick = fnStart;
+        $api.byId('btnPause').onclick = fnPause;
     }
 
 </script>

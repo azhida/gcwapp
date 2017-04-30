@@ -20,7 +20,6 @@
     <ul id="list" class="aui-user-view">
         <template v-for='item in items'>
         <li class="aui-user-view-cell aui-img" v-on:click="fnLoadMusic(item.url);">
-            <span style="display: none;">{{item.url}}</span>
             <img class="aui-img-object aui-pull-left" v-bind:src="'http://www.weilh.vip' + (item.smallimg)" v-bind:alt="item.smallimg">
             <div class="aui-img-body">
                 <span>{{item.title}}</span>
@@ -56,22 +55,42 @@
     }
 
 
-
-    function fnLoadList(){
+    // 定义偏移量，起始位置 skip 0，每次读取 LIMIT 2 条记录，
+    // 下拉刷新时，每次读取两条数据
+    var skip = 0, LIMIT = 2; // skip 会变，所以小写，LIMIT是固定的，所以大写，一种编码习惯
+    var vm; // 需要 将 vue对象变为全局变量
+    function fnLoadList(isPull){
         // 向服务器请求数据
         api.ajax({
             url: 'http://weilh.vip/admin/news/api',
             method: 'get',
             data: {
                 values: {
-                    name: 'haha'
+                    skip: skip,
+                    limit: LIMIT
                 }
             }
         }, function(ret, err) {
             if (ret) {
-                // api.alert({ msg: JSON.stringify(ret) });
+
+                // 计算每一次下拉刷新的起始位置和偏移量
+                if (ret.length < LIMIT) {
+                    // 
+                    skip += ret.length;
+                } else {
+                    skip += LIMIT;
+                }
+
+                // 判断是否是下拉刷新
+                if (isPull) {
+                    // 追加下拉刷新得到的新数据 到前面（顶部）
+                    for(var i = 0; i < ret.length; i++) {
+                        vm.items.unshift(ret[i]);
+                    }
+                    return;
+                }
                 // 使用 vuejs
-                var vm = new Vue({
+                vm = new Vue({
                     el: '#list',
                     data: {
                         items: ret
@@ -92,6 +111,22 @@
     apiready = function(){
         fnLoadList();
 
+        // 实现下拉刷新功能
+        api.setRefreshHeaderInfo({
+            visible: true,  // 是否可以拖动
+            loadingImg: 'widget: //image/1.png', // 下拉时载入的 图片
+            bgColor: '#ccc', // 背景色
+            textColor: '#fff', // 文本颜色
+            textDown: '下拉刷新...', // 显示文字
+            textUp: '松开刷新...',
+            showTime: true // 是否显示时间
+        }, function(ret, err){
+            // 加载远程代码，true代表 其是下拉刷新
+            fnLoadList(true);
+            // 停止下拉刷新
+            api.refreshHeaderLoadDone();
+        
+        });
     }
         
 </script>
