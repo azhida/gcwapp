@@ -17,59 +17,81 @@
 <body>
 
 <div class="aui-content">
-    <ul class="aui-user-view">
-        <li class="aui-user-view-cell aui-img" onclick="fnLoadMusic()">
-            <img class="aui-img-object aui-pull-left" src="../image/demo4.png">
+    <ul id="list" class="aui-user-view">
+        <template v-for='item in items'>
+        <li class="aui-user-view-cell aui-img" v-on:click="fnLoadMusic(item.url);">
+            <span style="display: none;">{{item.url}}</span>
+            <img class="aui-img-object aui-pull-left" v-bind:src="'http://www.weilh.vip' + (item.smallimg)" v-bind:alt="item.smallimg">
             <div class="aui-img-body">
-                <span>流浪男<em>11.1KM</em></span>
-                <p class='aui-ellipsis-1'>北京轻元素网络科技</p>
+                <span>{{item.title}}</span>
+                <p class='aui-ellipsis-1'>{{item.description}}</p>
             </div>
         </li>
+        </template>
+        
     </ul>
 </div>
-
 
 
 </body>
 <script type="text/javascript" src="../script/api.js"></script>
 <script type="text/javascript" src="../script/aui-alert.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+
+
+
 
 <script type="text/javascript">
-    function fnLoadMusic(){
+    function fnLoadMusic(url){
+
         // 打开新的win窗体
         api.openWin({
             name: 'music',
             url: './win_music.html',
             pageParam: {
-                name: 'test'
+                // 左边是参数的名称，右边是参数的值
+                url: url
             }
         });
     }
 
+
+
     function fnLoadList(){
         // 向服务器请求数据
         api.ajax({
-            url: 'http://www.weilh.vip/admin/news/api',
-            method: 'post',
+            url: 'http://weilh.vip/admin/news/api',
+            method: 'get',
             data: {
-                values: { 
+                values: {
                     name: 'haha'
-                },
-                files: { 
-                    file: 'fs://a.gif'
                 }
             }
-        },function(ret, err){
+        }, function(ret, err) {
             if (ret) {
-                alert( JSON.stringify( ret ) );
+                // api.alert({ msg: JSON.stringify(ret) });
+                // 使用 vuejs
+                var vm = new Vue({
+                    el: '#list',
+                    data: {
+                        items: ret
+                    },
+                     methods: {
+                        say: function (message) {
+                            // var url = document.getElementById()
+                            alert(message)
+                        }
+                    }
+                });
             } else {
-                alert( JSON.stringify( err ) );
+                api.alert({ msg: JSON.stringify(err) });
             }
         });
     }
 
     apiready = function(){
         fnLoadList();
+
     }
         
 </script>
